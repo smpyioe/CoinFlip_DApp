@@ -1,17 +1,28 @@
-import { useAccount, useConnect, useDisconnect, useBalance, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useBalance, useReadContract, useWriteContract, useWaitForTransactionReceipt,useSwitchChain } from 'wagmi'
 import { anvil } from 'wagmi/chains'
 import { formatEther, parseEther } from 'viem'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { COINFLIP_ADDRESS, COINFLIP_ABI } from './contracts'
 
 function App() {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, chain } = useAccount()
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
+  const { switchChain} = useSwitchChain();
   const { data: balance } = useBalance({ 
     address,
     chainId: anvil.id 
   })
+
+  const isWrongNetwork = chain && chain.id !== anvil.id;
+
+  useEffect(() => {
+    if (isConnected && isWrongNetwork) {
+      console.log(chain.id)
+      console.log(anvil.id)
+      switchChain({ chainId: anvil.id })
+    }
+  }, [isConnected, isWrongNetwork, switchChain])
 
   const [depositAmount, setDepositAmount] = useState('')
   const [withdrawAmount, setwithdrawAmount] = useState('')
@@ -42,7 +53,7 @@ function App() {
       address: COINFLIP_ADDRESS,
       abi: COINFLIP_ABI,
       functionName: 'deposit',
-      value: parseEther(depositAmount),
+      value: parseEther(depositAmount)
     })
     setDepositAmount('');
   }
@@ -57,7 +68,7 @@ function App() {
       functionName: 'withdraw',
       args: [parseEther(withdrawAmount)],
     })
-    setwithdrawAmount('');
+    setwithdrawAmount('')
   }
 
   const handleFlip = () => {
@@ -135,7 +146,9 @@ function App() {
                 />
               </div>
                 <button
-                onClick={() => setDepositAmount(parseFloat(balance.formatted).toFixed(4))}
+                  onClick={() => balance && setDepositAmount(parseFloat(balance.formatted).toFixed(4))}
+                  disabled={!balance}
+                  className="px-3 py-2 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-500 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
                 >
                   Max
                 </button>
@@ -163,7 +176,9 @@ function App() {
                   className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
                 />
                 <button
-                onClick={() => setwithdrawAmount(parseFloat(formatEther(contractBalance)).toFixed(4))}
+                onClick={() => contractBalance && setwithdrawAmount(parseFloat(formatEther(contractBalance)).toFixed(4))}
+                disabled={!contractBalance}
+                className="px-3 py-2 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-500 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
                 >
                   Max
                 </button>
