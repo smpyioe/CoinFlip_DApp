@@ -9,6 +9,8 @@ contract CoinFlip {
 
     mapping(address => uint256) public balances;
 
+    event GameResult(address player, bool win, CoinGuess guess);
+
     function deposit() external payable {
         require(msg.value > 0, "Must send ETH");
         balances[msg.sender] += msg.value;
@@ -19,8 +21,6 @@ contract CoinFlip {
         balances[msg.sender] -= amount;
         payable(msg.sender).transfer(amount);
     }
-
-    event GameResult(address player, bool win, CoinGuess guess);
 
     function flip(CoinGuess guess, uint256 amount) external {
         require(balances[msg.sender]>=amount, "Not enough balance");
