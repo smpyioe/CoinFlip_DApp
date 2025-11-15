@@ -32,7 +32,6 @@ export function CoinFlipGame({ contractBalance, isPending, isConfirming, isSucce
       <div className="flex justify-center mb-8">
         <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-2xl transform hover:rotate-180 transition-transform duration-500">
           <span className="text-4xl font-bold text-gray-900">
-            {guess === 0 ? '👑' : '🦅'}
           </span>
         </div>
       </div>
@@ -49,7 +48,7 @@ export function CoinFlipGame({ contractBalance, isPending, isConfirming, isSucce
                   : 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:bg-gray-600'
               }`}
             >
-              👑 Heads
+              Heads
             </button>
             <button
               onClick={() => setGuess(1)}
@@ -59,7 +58,7 @@ export function CoinFlipGame({ contractBalance, isPending, isConfirming, isSucce
                   : 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:bg-gray-600'
               }`}
             >
-              🦅 Tails
+              Tails
             </button>
           </div>
         </div>

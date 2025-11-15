@@ -7,6 +7,7 @@ import { DepositCard } from './components/DepositCard'
 import { WithdrawCard } from './components/WithdrawCard'
 import { CoinFlipGame } from './components/CoinFlipGame'
 import { ConnectWallet } from './components/ConnectWallet'
+import { GameHistory } from './components/GameHistory'
 
 function App() {
   const { address, isConnected, chain } = useAccount()
@@ -22,8 +23,6 @@ function App() {
 
   useEffect(() => {
     if (isConnected && isWrongNetwork) {
-      console.log(chain.id)
-      console.log(anvil.id)
       switchChain({ chainId: anvil.id })
     }
   }, [isConnected, isWrongNetwork, switchChain])
@@ -33,7 +32,8 @@ function App() {
     abi: COINFLIP_ABI,
     eventName: 'GameResult',
     onLogs(logs) {
-      console.log('New logs!', logs)
+      console.log('New game result!', logs)
+      // Recharger l'historique ou mettre à jour le state
     },
     onError(error) {
       console.log('Error', error)
@@ -81,6 +81,7 @@ function App() {
             isPending={isPending}
             isConfirming={isConfirming}
           />
+          <GameHistory />
         </div>
       )}
 
